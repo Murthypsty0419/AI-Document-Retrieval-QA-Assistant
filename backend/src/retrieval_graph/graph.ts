@@ -3,11 +3,7 @@ import { AgentStateAnnotation } from './state.js';
 import { makeRetriever } from '../shared/retrieval.js';
 import { formatDocs } from './utils.js';
 import { Document } from '@langchain/core/documents';
-import {
-  AIMessage,
-  BaseMessage,
-  HumanMessage,
-} from '@langchain/core/messages';
+import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 import { RESPONSE_SYSTEM_PROMPT, ROUTER_SYSTEM_PROMPT } from './prompts.js';
 import { RunnableConfig } from '@langchain/core/runnables';

@@ -34,7 +34,6 @@ export function ensureAgentConfiguration(
   const baseConfig = ensureBaseConfiguration(config);
   return {
     ...baseConfig,
-    queryModel:
-      configurable.queryModel || 'google-genai/gemini-2.5-flash-lite',
+    queryModel: configurable.queryModel || 'google-genai/gemini-2.5-flash-lite',
   };
 }
