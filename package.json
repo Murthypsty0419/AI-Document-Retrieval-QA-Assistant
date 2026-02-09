@@ -21,7 +21,5 @@
     "devDependencies": {
         "turbo": "latest"
     },
-    "dependencies": {
-        "@langchain/google-genai": "^2.1.13"
-    }
+    "dependencies": {}
 }

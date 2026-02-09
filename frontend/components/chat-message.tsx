@@ -28,7 +28,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
     const seen = new Set<string>();
     return message.sources.filter((source) => {
       const rawSource =
-        source.metadata?.source || source.metadata?.filename || 'unknown-source';
+        source.metadata?.source ||
+        source.metadata?.filename ||
+        'unknown-source';
       const filename = rawSource.split('/').pop() || rawSource;
       const page = source.metadata?.loc?.pageNumber ?? 'unknown-page';
       const key = `${filename}::${page}`;
@@ -49,9 +51,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   };
 
   const showSources =
-    message.role === 'assistant' &&
-    dedupedSources &&
-    dedupedSources.length > 0;
+    message.role === 'assistant' && dedupedSources && dedupedSources.length > 0;
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -97,9 +97,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
                         >
                           <CardContent className="p-3">
                             <p className="text-sm font-medium truncate">
-                              {(source.metadata?.source ||
+                              {(
+                                source.metadata?.source ||
                                 source.metadata?.filename ||
-                                'N/A')
+                                'N/A'
+                              )
                                 .split('/')
                                 .pop()}
                             </p>
