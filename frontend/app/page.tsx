@@ -11,13 +11,12 @@ import { ExamplePrompts } from '@/components/example-prompts';
 import { ChatMessage } from '@/components/chat-message';
 import { FilePreview } from '@/components/file-preview';
 import { client } from '@/lib/langgraph-client';
-import {
-  AgentState,
-  documentType,
-  PDFDocument,
-  RetrieveDocumentsNodeUpdates,
-} from '@/types/graphTypes';
-import { Card, CardContent } from '@/components/ui/card';
+import { PDFDocument, RetrieveDocumentsNodeUpdates } from '@/types/graphTypes';
+
+type SseEvent = {
+  event?: string;
+  data?: unknown;
+};
 export default function Home() {
   const { toast } = useToast(); // Add this hook
   const [messages, setMessages] = useState<
@@ -77,7 +76,7 @@ export default function Home() {
       }
     };
     initThread();
-  }, []);
+  }, [threadId, toast]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -127,8 +126,10 @@ export default function Home() {
 
       const decoder = new TextDecoder();
 
-      while (true) {
+      let isDone = false;
+      while (!isDone) {
         const { done, value } = await reader.read();
+        isDone = done;
         if (done) break;
 
         const chunkStr = decoder.decode(value);
@@ -138,11 +139,18 @@ export default function Home() {
           if (!line.startsWith('data: ')) continue;
 
           const sseString = line.slice('data: '.length);
-          let sseEvent: any;
+          let sseEvent: SseEvent | null = null;
           try {
-            sseEvent = JSON.parse(sseString);
+            const parsed = JSON.parse(sseString) as unknown;
+            if (typeof parsed === 'object' && parsed !== null) {
+              sseEvent = parsed as SseEvent;
+            }
           } catch (err) {
             console.error('Error parsing SSE line:', err, line);
+            continue;
+          }
+
+          if (!sseEvent) {
             continue;
           }
 
@@ -296,7 +304,7 @@ export default function Home() {
                   href="https://www.oreilly.com/library/view/learning-langchain/9781098167271/"
                   className="underline hover:text-foreground"
                 >
-                  Learning LangChain (O'Reilly): Building AI and LLM
+                  Learning LangChain (O&apos;Reilly): Building AI and LLM
                   applications with LangChain and LangGraph
                 </a>
               </p>

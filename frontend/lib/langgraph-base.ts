@@ -1,9 +1,4 @@
-import {
-  Client,
-  DefaultValues,
-  Thread,
-  ThreadState,
-} from '@langchain/langgraph-sdk';
+import { Client, Thread, ThreadState } from '@langchain/langgraph-sdk';
 
 export class LangGraphBase {
   client: Client;
@@ -15,7 +10,7 @@ export class LangGraphBase {
   /**
    * Creates a new thread with optional metadata
    */
-  async createThread(metadata?: Record<string, any>) {
+  async createThread(metadata?: Record<string, unknown>) {
     return this.client.threads.create({ metadata });
   }
 
@@ -30,7 +25,7 @@ export class LangGraphBase {
    * Searches for threads with optional metadata filters
    */
   async searchThreads(params: {
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     limit?: number;
     offset?: number;
   }): Promise<Thread[]> {
@@ -44,7 +39,9 @@ export class LangGraphBase {
   /**
    * Gets the current state of a thread
    */
-  async getThreadState<T extends Record<string, any> = Record<string, any>>(
+  async getThreadState<
+    T extends Record<string, unknown> = Record<string, unknown>,
+  >(
     threadId: string,
   ): Promise<ThreadState<T>> {
     return this.client.threads.getState(threadId);
@@ -55,7 +52,7 @@ export class LangGraphBase {
    */
   async updateThreadState(
     threadId: string,
-    values: Record<string, any>,
+    values: Record<string, unknown>,
     asNode?: string,
   ) {
     return this.client.threads.updateState(threadId, {
@@ -74,7 +71,7 @@ export class LangGraphBase {
   /**
    * Gets the history of a thread's states
    */
-  async getThreadHistory(threadId: string, limit: number = 10) {
+  async getThreadHistory(threadId: string, limit = 10) {
     return this.client.threads.getHistory(threadId, { limit });
   }
 
@@ -88,14 +85,24 @@ export class LangGraphBase {
   /**
    * Utility function to get interrupts from a thread
    */
-  getThreadInterrupts(thread: Thread): any[] | undefined {
+  getThreadInterrupts(thread: Thread): unknown[] | undefined {
     if (!thread.interrupts) return undefined;
 
     return Object.values(thread.interrupts).flatMap((interrupt) => {
-      if (Array.isArray(interrupt[0])) {
-        return interrupt[0][1]?.value;
+      if (Array.isArray(interrupt)) {
+        const first = interrupt[0];
+        if (Array.isArray(first)) {
+          const candidate = first[1] as { value?: unknown } | undefined;
+          return candidate?.value !== undefined ? [candidate.value] : [];
+        }
+
+        return interrupt
+          .map((item) => (item as { value?: unknown }).value)
+          .filter((value): value is unknown => value !== undefined);
       }
-      return interrupt.map((i) => i.value);
+
+      const value = (interrupt as { value?: unknown }).value;
+      return value !== undefined ? [value] : [];
     });
   }
 
@@ -105,7 +112,7 @@ export class LangGraphBase {
   async resumeThread(
     threadId: string,
     assistantId: string,
-    resumeValue: any,
+    resumeValue: unknown,
     config?: {
       configurable?: { [key: string]: unknown };
     },

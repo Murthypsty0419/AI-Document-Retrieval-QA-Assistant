@@ -20,7 +20,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "lint:langgraph-json": "node scripts/checkLanggraphPaths.js",
+    "lint:langgraph-json": "node --no-warnings ../scripts/checkLanggraphPaths.js",
     "lint:all": "yarn lint & yarn lint:langgraph-json",
     "langgraph:dev": "npx @langchain/langgraph-cli dev"
   },
@@ -60,6 +60,6 @@
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
     "tsx": "^4.19.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.0.4"
   }
 }

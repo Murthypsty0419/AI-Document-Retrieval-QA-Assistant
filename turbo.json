@@ -9,6 +9,9 @@
       "lint": {
         "dependsOn": ["^lint"]
       },
+      "lint:all": {
+        "dependsOn": ["^lint:all"]
+      },
       "format": {
         "dependsOn": ["^format"]
       },

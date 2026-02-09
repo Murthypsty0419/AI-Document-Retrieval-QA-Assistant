@@ -65,8 +65,9 @@ export async function POST(request: NextRequest) {
       try {
         const docs = await processPDF(file);
         allDocs.push(...docs);
-      } catch (error: any) {
-        console.error(`Error processing file ${file.name}:`, error);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`Error processing file ${file.name}:`, message);
         // Continue processing other files; errors are logged
       }
     }
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // Run the ingestion graph
     const thread = await langGraphServerClient.createThread();
-    const ingestionRun = await langGraphServerClient.client.runs.wait(
+    await langGraphServerClient.client.runs.wait(
       thread.thread_id,
       'ingestion_graph',
       {
@@ -99,10 +100,11 @@ export async function POST(request: NextRequest) {
       message: 'Documents ingested successfully',
       threadId: thread.thread_id,
     });
-  } catch (error: any) {
-    console.error('Error processing files:', error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error processing files:', message);
     return NextResponse.json(
-      { error: 'Failed to process files', details: error.message },
+      { error: 'Failed to process files', details: message },
       { status: 500 },
     );
   }
