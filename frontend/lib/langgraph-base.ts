@@ -41,9 +41,7 @@ export class LangGraphBase {
    */
   async getThreadState<
     T extends Record<string, unknown> = Record<string, unknown>,
-  >(
-    threadId: string,
-  ): Promise<ThreadState<T>> {
+  >(threadId: string): Promise<ThreadState<T>> {
     return this.client.threads.getState(threadId);
   }
 
